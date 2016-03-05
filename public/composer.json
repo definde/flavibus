@@ -1,0 +1,10 @@
+{
+    "name": "dba/flavia",
+    "authors": [
+        {
+            "name": "Daniel Balzter",
+            "email": "daniel.balzter@gmail.com"
+        }
+    ],
+    "require": {}
+}
