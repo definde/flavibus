@@ -236,6 +236,7 @@ class VendingMachineService
 
     private function printChangeMoney($changeMoney){
         $sum = 0;
+        echo("CASHOVERVIEWbr/>");
         foreach($changeMoney as $coinValue => $coinAmount ){
             echo("You get $coinAmount Coin(s) of " . ($coinValue/100) . "Euro <br />");
             $sum += (($coinValue/100) * $coinAmount);
