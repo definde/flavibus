@@ -175,8 +175,9 @@ class SimpleDispatch
 
 
     public function printMoneyStock($venMachine){
+        echo("<br/>CASHOVERVIEW<br/>");
         echo('------------------------');
-        echo("CASHOVERVIEW<br/><br/>");
+
         foreach($venMachine->getAvailableChangeMoney() as $valueOfSlot => $availableCoins){
             $valueOfSlot = (intval($valueOfSlot) / 100);
             echo('<br />  CoinValue: ' . $valueOfSlot . 'Euro');
@@ -192,7 +193,7 @@ class SimpleDispatch
             $this->getStorage()->set('vendingMachine', $this->getVendingMachineService()->getVendingMachine());
         }
         echo("---------------------------------------------------<br />");
-        echo("Current stock information: <br />");
+        echo("STOCK OVERVIEW: <br />");
         $this->renderStockInfo($this->getVendingMachineService()->getVendingMachine());
         echo("<br/>---------------------------------------------------<br />");
 
