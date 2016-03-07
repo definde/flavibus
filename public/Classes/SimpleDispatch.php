@@ -146,13 +146,15 @@ class SimpleDispatch
         array_shift($requestSplit);
         if(count($requestSplit) > 1){
             $controllerPrefix = ucfirst(array_shift($requestSplit));
+            $actionName = array_shift($requestSplit);
         } else {
             $controllerPrefix = "Index";
+            $actionName = "index";
         }
 
         $controllerName = "Dba\\Flavia\\Controller\\" . $controllerPrefix . "Controller";
 
-        $method = array_shift($requestSplit) . "Action";
+        $method = $actionName . "Action";
 
 
         $test = new $controllerName($this->getVendingMachineService());
