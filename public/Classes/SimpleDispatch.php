@@ -176,6 +176,7 @@ class SimpleDispatch
 
     public function printMoneyStock($venMachine){
         echo('------------------------');
+        echo("CASHOVERVIEW<br/><br/>");
         foreach($venMachine->getAvailableChangeMoney() as $valueOfSlot => $availableCoins){
             $valueOfSlot = (intval($valueOfSlot) / 100);
             echo('<br />  CoinValue: ' . $valueOfSlot . 'Euro');
