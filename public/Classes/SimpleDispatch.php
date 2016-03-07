@@ -140,15 +140,22 @@ class SimpleDispatch
         $this->preDispatch();
         $this->setRequest($request);
 
+
         $requestSplit = explode('/', $request['REQUEST_URI']);
 
         array_shift($requestSplit);
-        $controllerName = "Dba\\Flavia\\Controller\\" . ucfirst(array_shift($requestSplit)) . "Controller";
+        if(count($requestSplit) > 1){
+            $controllerPrefix = ucfirst(array_shift($requestSplit));
+        } else {
+            $controllerPrefix = "Index";
+        }
+
+        $controllerName = "Dba\\Flavia\\Controller\\" . $controllerPrefix . "Controller";
 
         $method = array_shift($requestSplit) . "Action";
 
-        $test = new $controllerName;
-        $test->setVendingMachineService($this->getVendingMachineService());
+
+        $test = new $controllerName($this->getVendingMachineService());
         $test->handleRequestParameter($requestSplit);
 
         call_user_func(array($test, $method));
@@ -156,15 +163,36 @@ class SimpleDispatch
         $this->shutDown();
     }
 
+    private function renderStockInfo($venMachine){
+        echo('Stock Info: </br>');
+        foreach($venMachine->getSlots() as $slot){
+            echo("Slotname: '" . $slot->getTitle() . "'</br> Available items: " . count($slot->getItems()) . "</br></br>");
+        }
+    }
 
 
 
+    public function printMoneyStock($venMachine){
+        echo('------------------------');
+        foreach($venMachine->getAvailableChangeMoney() as $valueOfSlot => $availableCoins){
+            $valueOfSlot = (intval($valueOfSlot) / 100);
+            echo('<br />  CoinValue: ' . $valueOfSlot . '€');
+            echo('<br /> Coins left: ' . $availableCoins);
+            echo('<br />-------');
+
+        }
+        echo('------------------------');
+    }
     private function shutDown()
     {
-        var_dump($this->getStorage()->get('vendingMaching'));
-        die;
         if ($this->getStorage()->get('vendingMaching')) {
             $this->getStorage()->set('vendingMachine', $this->getVendingMachineService()->getVendingMachine());
         }
+        echo("---------------------------------------------------<br />");
+        echo("Current stock information: <br />");
+        $this->renderStockInfo($this->getVendingMachineService()->getVendingMachine());
+        echo("<br/>---------------------------------------------------<br />");
+
+        $this->printMoneyStock($this->getVendingMachineService()->getVendingMachine());
     }
 }

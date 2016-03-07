@@ -6,10 +6,7 @@ class VendingMachineService
 {
     protected $vendingMachine;
 
-
     protected $storage;
-
-
 
 
     /**
@@ -73,28 +70,36 @@ class VendingMachineService
         $slot = $this->findSlotByName($slotName);
         $items = $slot->getItems();
         if ($this->isDrinkAvailable($slot) &&
-            $this->isMoneyEnough($slot, $money)
+            $this->isMoneyEnough($slot, $money) &&
+            $this->processChangeMoney($slot, $money)
         ) {
+
             echo("You bought a coke for " . floatval(reset($items)->getPrice()) . "€<br>");
             echo("You paid" . floatval($money) . "€<br>");
-            echo("Your change money is" . $this->getChangeMoney($slot, $money) . "<br>");
+            array_shift($items);
+            $slot->setItems($items);
         }
     }
 
 
 
 
-    private function getChangeMoney($slot, $money)
+    private function processChangeMoney($slot, $givenMoney)
     {
         $available = $this->getVendingMachine()->getAvailableChangeMoney();
         $items = $slot->getItems();
-        $moneyDifferenceInCent = floatval($money) * 100 - floatval(reset($items)->getPrice() * 100);
+        $moneyDifferenceInCent = floatval($givenMoney) * 100 - floatval(reset($items)->getPrice() * 100);
         krsort($available);
-        $available = $this->calculateChangeMoney($available, $moneyDifferenceInCent);
-        $this->getVendingMachine()->setAvailableChangeMoney($available);
 
-        var_dump($this->getVendingMachine()->getAvailableChangeMoney());
-        die;
+        if(true == $this->calculateChangeMoney($available, $moneyDifferenceInCent)){
+            return true;
+        } else {
+            echo("Sorry, we do not have change money for your requested payment. <br />");
+        }
+
+
+
+
     }
 
 
@@ -102,22 +107,24 @@ class VendingMachineService
 
     public function calculateChangeMoney($available, $moneyDifferenceInCent)
     {
-        foreach ($available as $wert => $anzahl) {
-            $total = $wert * $anzahl;
+        $changeCoins = array();
+        foreach ($available as $valueOfSingleCoin => $numberOfCoinsAvailable) {
 
-            $muenzenDieserArtBenoetigt = intval(floatval($moneyDifferenceInCent) / $wert);
+            $amountOfCoinsNeeded = intval(floatval($moneyDifferenceInCent) / $valueOfSingleCoin);
 
-            if ($muenzenDieserArtBenoetigt < 1) {
+            if ($amountOfCoinsNeeded < 1) {
                 continue;
             }
 
-            $moneyDifferenceInCent = floatval($moneyDifferenceInCent) % $wert;
+            $moneyDifferenceInCent = floatval($moneyDifferenceInCent) % $valueOfSingleCoin;
 
-            if ($muenzenDieserArtBenoetigt <= $anzahl) {
-                $available[$wert] -= $muenzenDieserArtBenoetigt;
+            if ($amountOfCoinsNeeded <= $numberOfCoinsAvailable) {
+                $available[$valueOfSingleCoin] -= $amountOfCoinsNeeded;
+                $changeCoins[$valueOfSingleCoin] = $amountOfCoinsNeeded;
             } else {
-                $available[$wert] = $available[$wert] - $anzahl;
-                $moneyDifferenceInCent = $moneyDifferenceInCent + (($muenzenDieserArtBenoetigt - $anzahl) * $wert);
+                $available[$valueOfSingleCoin] = $available[$valueOfSingleCoin] - $numberOfCoinsAvailable;
+                $changeCoins[$valueOfSingleCoin] = $available[$valueOfSingleCoin] - $numberOfCoinsAvailable;
+                $moneyDifferenceInCent = $moneyDifferenceInCent + (($amountOfCoinsNeeded - $numberOfCoinsAvailable) * $valueOfSingleCoin);
             }
 
             if (intval($moneyDifferenceInCent) > 0) {
@@ -127,25 +134,29 @@ class VendingMachineService
             }
         }
         if ($moneyDifferenceInCent > 0) {
-            throw new \Exception('No change money left.');
+            return false;
         }
 
-        return $available;
+        $this->getVendingMachine()->setAvailableChangeMoney($available);
+        $this->printChangeMoney($changeCoins);
+        return true;
     }
 
 
 
 
-    public function xd()
+
+
+
+
+    private function isDrinkAvailable(\Dba\Flavia\VendingMachine\SlotInterface $slot)
     {
-    }
-
-
-
-
-    private function isDrinkAvailable($slot)
-    {
-        return $slot->hasItems();
+        if (true == $slot->hasItems()){
+            return true;
+        } else {
+            echo('Sorry, no drinks of this type are still available.<br />');
+            return false;
+        }
     }
 
 
@@ -158,7 +169,8 @@ class VendingMachineService
         if (floatval(reset($items)->getPrice()) < floatval($money)) {
             return true;
         } else {
-            throw new \Exception('Not enough money paid.');
+            echo("Not enough money paid.<br />");
+            return false;
         }
     }
 
@@ -168,9 +180,6 @@ class VendingMachineService
     public function changeMoney($slot, $money)
     {
         $changeMoney = $this->getVendingMachine()->getAvailableChangeMoney();
-
-        var_dump($changeMoney);
-        die;
     }
 
 
@@ -212,7 +221,7 @@ class VendingMachineService
             $slot->setMaxItems($vendingMachine->getMaxItemsPerSlot());
             $slot->setUid($value['name']);
             $slot->setTitle($value['name']);
-
+            $slot->setItemPrice($value['price']);
             for ($i = 0; $i < $vendingMachine->getMaxItemsPerSlot(); $i++) {
                 $item = new \Dba\Flavia\VendingMachine\Item();
                 $item->setName($value['name']);
@@ -223,5 +232,15 @@ class VendingMachineService
         }
 
         return $vendingMachine;
+    }
+
+    private function printChangeMoney($changeMoney){
+        $sum = 0;
+        foreach($changeMoney as $coinValue => $coinAmount ){
+            echo("You get $coinAmount Coin(s) of " . ($coinValue/100) . "€ <br />");
+            $sum += (($coinValue/100) * $coinAmount);
+        }
+        echo("----------<br/>");
+        echo("You get a total of " . $sum . "€ change. <br /><br /><br />");
     }
 }

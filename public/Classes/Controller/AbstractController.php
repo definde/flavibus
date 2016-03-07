@@ -9,7 +9,10 @@ abstract class AbstractController
 
     protected $requestParamter;
 
-
+    public function __construct($vendingMachineService = NULL)
+    {
+        $this->setVendingMachineService($vendingMachineService);
+    }
 
 
     /**
@@ -74,7 +77,7 @@ abstract class AbstractController
     /**
      * @param mixed $vendingMachineService
      */
-    public function setVendingMachineService($vendingMachineService)
+    public function setVendingMachineService(\Dba\Flavia\Service\VendingMachineService $vendingMachineService)
     {
         $this->vendingMachineService = $vendingMachineService;
     }

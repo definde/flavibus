@@ -18,12 +18,37 @@ class Slot implements SlotInterface
 
     protected $uid;
 
+    protected $itemPrice;
+
+
+
+
+    /**
+     * @return mixed
+     */
+    public function getItemPrice()
+    {
+        return $this->itemPrice;
+    }
+
+
+
+
+    /**
+     * @param mixed $itemPrice
+     */
+    public function setItemPrice($itemPrice)
+    {
+        $this->itemPrice = $itemPrice;
+    }
+
+
 
 
 
     public function hasItems()
     {
-        return count($this->getItems()) > 0;
+        return (count($this->getItems()) > 0);
     }
 
 

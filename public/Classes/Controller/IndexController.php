@@ -4,8 +4,9 @@ namespace Dba\Flavia\Controller;
 
 class IndexController extends AbstractController
 {
-    public function __construct()
+    public function __construct($vendingMachineService = NULL)
     {
+        parent::__construct($vendingMachineService);
         $this->printPossibleCommands();
     }
 
@@ -14,8 +15,6 @@ class IndexController extends AbstractController
 
     public function indexAction()
     {
-        $venMachine = $this->getVendingMachineService()->getVendingMachine();
-        var_dump($venMachine->getAvailableChangeMoney());
     }
 
 
@@ -41,24 +40,19 @@ class IndexController extends AbstractController
 
 
 
-    public function showDrinksAction()
-    {
 
-        $venMachine = $this->getVendingMachineService()->getVendingMachine();
-
-        foreach ($venMachine->getSlots() as $slot) {
-            echo $slot->getTitle() . " available: " . count($slot->getItems()) . "<br>";
-        }
-    }
 
 
 
 
     private function printPossibleCommands()
     {
-        echo("<a href='/index/index'>First Command</a> <br />");
-        echo("<a href='/index/buy/item/coke/money/4.5'>Buy a Coke</a> <br />");
-        echo("<a href='/index/showdrinks'>Show all drinks</a> <br />");
-        echo("<a href='/index/reset'>Reset</a> <br />");
+        $venMachine = $this->getVendingMachineService()->getVendingMachine();
+        foreach($venMachine->getSlots() as $slot){
+            echo("<a href='/index/buy/item/".$slot->getTitle()."/money/4.5'>Buy a ".$slot->getTitle()." for ". $slot->getItemPrice() ."€</a> <br />");
+        }
+
+        echo("<a href='/index/reset'>Reset/Refill Vendingmachine</a> <br />");
+        echo("---------------------------------------------------<br />");
     }
 }
