@@ -49,7 +49,7 @@ class IndexController extends AbstractController
     {
         $venMachine = $this->getVendingMachineService()->getVendingMachine();
         foreach($venMachine->getSlots() as $slot){
-            echo("<a href='/index/buy/item/".$slot->getTitle()."/money/4.5'>Buy a ".$slot->getTitle()." for ". $slot->getItemPrice() ."€</a> <br />");
+            echo("<a href='/index/buy/item/".$slot->getTitle()."/money/4.5'>Buy a ".$slot->getTitle()." for ". $slot->getItemPrice() ."Euro</a> <br />");
         }
 
         echo("<a href='/index/reset'>Reset/Refill Vendingmachine</a> <br />");

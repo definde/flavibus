@@ -74,8 +74,8 @@ class VendingMachineService
             $this->processChangeMoney($slot, $money)
         ) {
 
-            echo("You bought a coke for " . floatval(reset($items)->getPrice()) . "€<br>");
-            echo("You paid" . floatval($money) . "€<br>");
+            echo("You bought a coke for " . floatval(reset($items)->getPrice()) . "Euro<br>");
+            echo("You paid" . floatval($money) . "Euro<br>");
             array_shift($items);
             $slot->setItems($items);
         }
@@ -237,10 +237,10 @@ class VendingMachineService
     private function printChangeMoney($changeMoney){
         $sum = 0;
         foreach($changeMoney as $coinValue => $coinAmount ){
-            echo("You get $coinAmount Coin(s) of " . ($coinValue/100) . "€ <br />");
+            echo("You get $coinAmount Coin(s) of " . ($coinValue/100) . "Euro <br />");
             $sum += (($coinValue/100) * $coinAmount);
         }
         echo("----------<br/>");
-        echo("You get a total of " . $sum . "€ change. <br /><br /><br />");
+        echo("You get a total of " . $sum . "Euro change. <br /><br /><br />");
     }
 }

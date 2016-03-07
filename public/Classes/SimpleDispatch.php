@@ -178,7 +178,7 @@ class SimpleDispatch
         echo('------------------------');
         foreach($venMachine->getAvailableChangeMoney() as $valueOfSlot => $availableCoins){
             $valueOfSlot = (intval($valueOfSlot) / 100);
-            echo('<br />  CoinValue: ' . $valueOfSlot . '€');
+            echo('<br />  CoinValue: ' . $valueOfSlot . 'Euro');
             echo('<br /> Coins left: ' . $availableCoins);
             echo('<br />-------');
 
