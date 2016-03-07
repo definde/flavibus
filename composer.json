@@ -1,30 +1,27 @@
 {
-    "name": "dba/xdxd",
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "http://composer.typo3.org/"
-        },
-        {
-            "type": "git",
-            "url": "https://github.com/definde/flavibus.git"
-        }
-    ],
-    "authors": [
-        {
-            "name": "Daniel Balzter",
-            "email": "daniel.balzter@gmail.com"
-        }
-    ],
-    "require": {
-        "dba/flavia": "dev-master"
+  "name": "dba/xdxd",
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "http://composer.typo3.org/"
     },
-    "autoload": {
-        "psr-4": {
-            "Dba\\Flavia\\": "public/Classes/"
-        }
-    },
-    "config": {
-        "secure-http": false
+    {
+      "type": "git",
+      "url": "https://github.com/definde/flavibus.git"
     }
+  ],
+  "authors": [
+    {
+      "name": "Daniel Balzter",
+      "email": "daniel.balzter@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Dba\\Flavia\\": "public/Classes/"
+    }
+  },
+  "config": {
+    "secure-http": false
+  }
 }
